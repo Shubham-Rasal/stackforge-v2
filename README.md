@@ -1,48 +1,70 @@
-# OpenVibe
+# StackForge
 
-A web UI for [OpenCode](https://opencode.ai). Chat, build, and code with AI through a landing page and workspace with full OpenCode server parity.
+A vibe-coding platform for building fullstack dApps on the [Stacks](https://stacks.co) L2 blockchain. StackForge is a starter template that wraps [OpenCode](https://opencode.ai) with a better UI and integrates [Daytona](https://daytona.io) sandboxes for fully isolated, cloud-based development environments.
+
+## What You Can Build
+
+StackForge supports two primary development modes:
+
+### 1. Clarity Smart Contracts
+An in-browser Clarity contract development experience inspired by [Stacks Labs Playground](https://play.stackslabs.com). Write, deploy, and test Clarity contracts with AI assistance — no local toolchain required.
+
+### 2. Fullstack Stacks dApps
+Select a template repo, clone it, and run it inside a Daytona sandbox. The AI agent works directly inside the sandbox environment, giving it full access to your file system, shell, and dev server. Build end-to-end Bitcoin-powered apps — DeFi protocols, NFT platforms, DAOs, and more.
+
+## Architecture
+
+```
+Browser (Next.js UI)
+    │
+    ├── Clarity Playground  ─── OpenCode (AI coding agent)
+    │                                │
+    └── Fullstack dApp Mode ─── Daytona Sandbox
+                                     ├── Cloned repo
+                                     ├── Dev server
+                                     └── OpenCode agent
+```
+
+**Key integration**: [OpenCode + Daytona guide](https://www.daytona.io/docs/en/guides/opencode/opencode-web-agent/)
 
 ## Prerequisites
 
-- [OpenCode](https://opencode.ai) server running (e.g. `opencode serve`)
 - Node.js 18+
 - pnpm
+- [Daytona](https://daytona.io) account (for sandbox mode)
+- [OpenCode](https://opencode.ai) server running locally or via Daytona
 
 ## Quick Start
 
-1. **Start the OpenCode server** (in a separate terminal):
+1. **Clone and install**:
 
    ```bash
-   opencode serve
+   git clone https://github.com/your-org/stackforge-v2
+   cd stackforge-v2
+   pnpm install
    ```
 
-   By default it listens on `http://127.0.0.1:4096`.
-
-2. **Configure the UI**:
+2. **Configure environment**:
 
    ```bash
    cp .env.example .env.local
-   # Edit .env.local with your GitHub OAuth credentials and optional OpenCode URL
+   # Fill in GitHub OAuth, OpenCode URL, and Daytona credentials
    ```
 
-3. **Install and run the UI**:
+3. **Start OpenCode** (local mode):
 
    ```bash
-   pnpm install
+   opencode serve
+   # Listens on http://127.0.0.1:4096 by default
+   ```
+
+4. **Run the UI**:
+
+   ```bash
    pnpm dev
    ```
 
-4. Open [http://localhost:3000](http://localhost:3000) in your browser.
-
-5. **Sign in with GitHub** to access projects and your repositories.
-
-## Routes
-
-| Route | Description |
-|-------|-------------|
-| `/` | Landing page (public) |
-| `/projects` | Projects dashboard (requires auth) |
-| `/project/<name>?instanceId=<id>` | Workspace for a specific repo/project |
+5. Open [http://localhost:3000](http://localhost:3000) and sign in with GitHub.
 
 ## Environment Variables
 
@@ -52,69 +74,65 @@ A web UI for [OpenCode](https://opencode.ai). Chat, build, and code with AI thro
 | `OPENCODE_SERVER_USERNAME` | HTTP basic auth username | (none) |
 | `OPENCODE_SERVER_PASSWORD` | HTTP basic auth password | (none) |
 | `OPENCODE_TIMEOUT_MS` | Request timeout in milliseconds | `120000` |
-| `AUTH_SECRET` | NextAuth secret (run `openssl rand -base64 32`) | (required) |
-| `AUTH_GITHUB_ID` | GitHub OAuth app client ID | (required for sign-in) |
-| `AUTH_GITHUB_SECRET` | GitHub OAuth app client secret | (required for sign-in) |
-| `AUTH_TRUST_HOST` | Set to `true` for localhost (fixes UntrustedHost in dev) | `true` recommended for dev |
+| `AUTH_SECRET` | NextAuth secret (`openssl rand -base64 32`) | (required) |
+| `AUTH_GITHUB_ID` | GitHub OAuth app client ID | (required) |
+| `AUTH_GITHUB_SECRET` | GitHub OAuth app client secret | (required) |
+| `AUTH_TRUST_HOST` | Set `true` for localhost dev | recommended |
 | `OPENVIBE_REPOS_DIR` | Directory for cloned repos | `$TMPDIR/openvibe-repos` |
 
 ### GitHub OAuth Setup
 
-1. Create a [GitHub OAuth App](https://github.com/settings/developers) (Settings → Developer settings → OAuth Apps)
-2. Set **Authorization callback URL** to `http://localhost:3000/api/auth/callback/github` (or your production URL)
-3. Copy the Client ID and Client Secret to `AUTH_GITHUB_ID` and `AUTH_GITHUB_SECRET`
+1. Go to [GitHub Developer Settings → OAuth Apps](https://github.com/settings/developers)
+2. Set **Authorization callback URL** to `http://localhost:3000/api/auth/callback/github`
+3. Copy Client ID and Secret into `AUTH_GITHUB_ID` / `AUTH_GITHUB_SECRET`
+
+## Routes
+
+| Route | Description |
+|-------|-------------|
+| `/` | Landing page — project type selection |
+| `/projects` | Dashboard — repo picker & sandbox launcher |
+| `/project/<name>` | Workspace — AI chat, file editor, live preview |
 
 ## Features
 
-- **Landing page** (`/`) – Sign in with GitHub; gradient hero; sign-out button
-- **Dashboard** (`/projects`) – GitHub repo grid (clone & open), open local directory with native folder picker
-- **Workspace** (`/project/<name>`) – URL-based routing with per-repo OpenCode instance
-- **Sessions sidebar** – Create, rename, delete, fork, share sessions; action menu via portal
-- **Chat panel** – AI messages with full Markdown rendering; copy-to-clipboard on all messages; shell command mode
-- **Tool rendering** – Distinct visual cards for bash, read, edit, write, glob, grep, web, todo, patch per tool type
-- **Review panel** – Inline LCS diff showing added/removed lines for all session file changes
-- **File viewer** – Embedded pane with syntax highlighting
-- **Tools panel** – .gitignore-aware file tree, symbol search, todo list
-- **Live preview** – Iframe preview of a running dev server
-- **Model chooser** – Select provider/model per message
-- **Connection status** – Shows OpenCode port and working directory in navbar
-- **Event streaming** – SSE with auto-reconnect; permission prompt overlay
-- **Resizable panels** – All panels (sidebar, chat, file viewer, review, tools) drag-to-resize
+- **Landing page** — warm Stacks-branded gradient, typewriter dApp idea prompts
+- **Daytona sandbox integration** — isolated cloud environments per project
+- **Clarity contract mode** — write & deploy Clarity contracts with AI (coming soon)
+- **Fullstack dApp mode** — clone a repo, spin up a sandbox, vibe-code the whole stack
+- **OpenCode workspace** — sessions, AI chat, file tree, diff viewer, live preview
+- **GitHub integration** — sign in, browse repos, clone with one click
+- **Resizable panels** — sidebar, chat, file viewer, review, tools all drag-to-resize
+- **Event streaming** — SSE with auto-reconnect and permission prompt overlay
+
+## Roadmap
+
+- [ ] Daytona sandbox launch & lifecycle management
+- [ ] Clarity Playground mode (in-browser REPL + AI)
+- [ ] Stacks dApp template gallery (DeFi, NFT, DAO starters)
+- [ ] One-click deploy to mainnet via Hiro Platform
+- [ ] Shareable sandbox links
 
 ## Project Structure
 
-- `app/` – Next.js app router (pages, API routes)
-- `app/page.tsx` – Landing page
-- `app/projects/page.tsx` – Workspace (protected)
-- `app/api/opencode/` – Proxy endpoints for OpenCode server
-- `app/api/workspace/clone/` – Clone repo and spawn OpenCode instance
-- `components/` – React UI components
-- `lib/opencode/` – Server-only OpenCode client and config
-- `lib/web/` – Browser API client, app store, and hooks
-- `lib/workspace/` – Clone and spawn OpenCode instances for repos
-
-## API Proxy Coverage
-
-The UI proxies these OpenCode server endpoints:
-
-- **Sessions**: list, create, get, update, delete, status, abort, children, fork, share, diff, todo, summarize, revert, unrevert, permissions
-- **Messages**: list, send
-- **Commands**: list, execute (slash commands, shell)
-- **Files**: find (text, file, symbol), file content
-- **Config**: config, providers
-- **Provider**: list, auth
-- **Events**: SSE stream
-
-## Scripts
-
-- `pnpm dev` – Start development server
-- `pnpm build` – Production build
-- `pnpm start` – Start production server
-- `pnpm lint` – Run ESLint
-- `pnpm test` – Run Vitest
+```
+app/                  Next.js app router (pages + API routes)
+  page.tsx            Landing page
+  projects/           Dashboard (protected)
+  project/[name]/     Workspace (protected)
+  api/opencode/       Proxy to OpenCode server
+  api/workspace/      Repo clone & sandbox management
+components/           React UI components
+lib/opencode/         Server-side OpenCode client
+lib/web/              Browser API client, Zustand store, SSE hook
+lib/workspace/        Workspace instance management
+```
 
 ## Learn More
 
+- [Stacks Documentation](https://docs.stacks.co)
+- [Clarity Language Reference](https://docs.stacks.co/clarity)
 - [OpenCode Documentation](https://opencode.ai/docs)
-- [OpenCode Server API](https://opencode.ai/docs/server/)
+- [Daytona + OpenCode Guide](https://www.daytona.io/docs/en/guides/opencode/opencode-web-agent/)
+- [Stacks Labs Playground](https://play.stackslabs.com)
 - [Next.js Documentation](https://nextjs.org/docs)
