@@ -1,6 +1,10 @@
 # StackForge
 
+
+
 A vibe-coding platform for building fullstack dApps on the [Stacks](https://stacks.co) L2 blockchain. StackForge is a starter template that wraps [OpenCode](https://opencode.ai) with a better UI and integrates [Daytona](https://daytona.io) sandboxes for fully isolated, cloud-based development environments.
+
+
 
 ## What You Can Build
 
